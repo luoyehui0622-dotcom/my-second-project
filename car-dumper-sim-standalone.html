@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>自动化汽车卸车机 · 沉浸式操作演练</title>
+<style>
+:root{--bg:#0b1220;--p:#131c2e;--p2:#1b2740;--ln:#2a3a5a;--tx:#e8eef9;--mu:#8fa3c4;--am:#f5a524;--gr:#22c55e;--rd:#ef4444;--sk:#38bdf8;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 560px at 70% -10%,#1b2c52,var(--bg) 62%);color:var(--tx);font-family:"Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+.w{max-width:1180px;margin:0 auto;padding:10px 12px 28px}
+.hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0}
+.lg{width:40px;height:40px;border-radius:10px;background:#fff;color:#111;font-weight:900;font-size:11px;display:grid;place-items:center}
+.hd h1{margin:0;font-size:clamp(17px,3vw,26px);font-weight:900}
+.hd small{color:var(--am);font-weight:900;display:block;font-size:12px}
+.sp{flex:1}
+button,.bt{font:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--p2);color:var(--tx);padding:7px 12px;border-radius:10px;font-weight:900;font-size:13px;text-decoration:none;transition:.15s;box-shadow:0 3px 0 #0006}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #0006}
+.am{background:var(--am);color:#1a1200;border-color:#fff3}.gr{background:var(--gr);color:#04210f}.rd{background:var(--rd);color:#fff}.sk{background:var(--sk);color:#021824}
+.pills{display:flex;gap:6px;overflow-x:auto;padding:6px 0 10px}
+.pills button{white-space:nowrap;font-size:12px;padding:6px 10px}
+.pills .on{background:var(--am);color:#1a1200}
+.g{display:grid;grid-template-columns:1.55fr 1fr;gap:12px}
+@media(max-width:900px){.g{grid-template-columns:1fr}}
+.c{background:var(--p);border:1px solid var(--ln);border-radius:16px;padding:10px}
+.sc{position:relative;border-radius:12px;overflow:hidden;background:#0d1526}
+#sc{display:block;width:100%;height:auto}
+#say{position:absolute;left:10px;right:10px;bottom:10px;padding:8px 12px;border-radius:10px;background:#000a;backdrop-filter:blur(4px);border:1px solid var(--ln);font-weight:900;font-size:clamp(12px,1.9vw,15px);min-height:36px}
+#say.bad{border-color:var(--rd);color:#fecaca}#say.ok{border-color:var(--gr);color:#bbf7d0}
+#say:empty{opacity:0}
+.hmi{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.hmi .t{font-size:11px;color:var(--mu);font-weight:900;width:100%}
+.sel{outline:2px solid #fff8}
+.badge{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--am);color:#1a1200;font-weight:900;font-size:20px}
+.slg{margin:10px 0;padding:10px 12px;border-left:4px solid var(--am);background:var(--p2);border-radius:0 10px 10px 0;font-weight:900;font-size:clamp(15px,2.4vw,19px);color:#fcd34d}
+.ac{display:flex;gap:8px;align-items:center;background:#0c1424;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;margin:6px 0;font-weight:700;font-size:14px}
+.ac b{color:var(--sk)}
+.wn{margin-top:8px;padding:9px 12px;border:2px solid var(--rd);background:#3b0d14;border-radius:10px;color:#fecaca;font-weight:900;font-size:13px}
+.rh{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px;margin-top:12px}
+.rh div{background:var(--p);border:1px solid var(--ln);border-radius:10px;padding:7px 10px;font-weight:900;font-size:14px;cursor:pointer}
+.rh i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--am);color:#1a1200;font-size:12px;margin-right:6px}
+.mv{transition-property:transform,opacity;transition-timing-function:linear;transition-duration:0ms}
+#rs,#mon,#mat,#tgr{transform-box:fill-box;transform-origin:50% 100%}
+#tgr{transition:.5s}#tgr.up{opacity:.2;transform:scaleY(.2)}#tgr.bad{fill:var(--rd)}
+.vib{animation:vb .09s infinite}@keyframes vb{50%{transform:translate(1.5px,-1.5px)}}
+#dust circle{opacity:0;fill:#8a6a45}#dust.on circle{animation:fl .8s linear infinite;animation-delay:var(--d)}
+@keyframes fl{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(70px)}}
+#puff circle{opacity:0;fill:#cbd5e1}#puff.on circle{animation:pf 2s ease-out;animation-delay:var(--d)}
+@keyframes pf{0%{opacity:.9;transform:translate(0,0) scale(.5)}100%{opacity:0;transform:translate(var(--x),-30px) scale(2.2)}}
+.lp{fill:#2a3340;transition:.2s}.lr.on{fill:#ef4444;filter:drop-shadow(0 0 8px #ef4444)}.ly.on{fill:#facc15;filter:drop-shadow(0 0 8px #facc15)}.lg2.on{fill:#22c55e;filter:drop-shadow(0 0 8px #22c55e)}
+.hud{position:absolute;top:8px;background:#000b;border:1px solid var(--ln);border-radius:10px;padding:4px 8px;font-size:11px;font-weight:900;z-index:2;text-align:center;color:#cbd5e1}.hud.l{left:8px}.hud.r{right:8px}.hud svg{width:76px;display:block}.hud b{color:#34d399;font-size:12px}.hud i{display:inline-block;width:15px;height:15px;border-radius:50%;margin:2px}.hud i.lp{background:#2a3340}.hud i.lr.on{background:#ef4444}.hud i.ly.on{background:#facc15}.hud i.lg2.on{background:#22c55e}
+#tgr.hid{transform:scaleY(0)}.hmi button{min-height:40px}body{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+@media(max-width:600px){.hd h1{font-size:17px}.c{padding:8px}.hud svg{width:56px}}
+#cvF,#cvN{transform-box:fill-box;transform-origin:50% 100%}#tgr.ghost{fill:none;stroke-dasharray:3 2;stroke:#facc15;transform:translateY(15px)}.hud.l{left:auto;right:8px}.hud.r{right:108px}
+#say{position:static;margin-top:8px;background:#0c1424;backdrop-filter:none;min-height:42px}
+</style></head><body><div class="w">
+<div class="hd"><div class="lg">容实</div><div><small>河南容实重型装备有限公司 · RunShark</small><h1>自动化汽车卸车机 · 沉浸式操作演练</h1></div><div class="sp"></div>
+<a class="bt gr" href="tel:18937161255">📞 18937161255</a><button class="sk" onclick="speak(cur().v)">🔊 语音讲解</button></div>
+<div class="pills" id="pills"></div>
+<div class="g"><div class="c">
+<div class="sc"><svg id="sc" viewBox="0 0 1010 380"><defs>
+<pattern id="hz" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="12" fill="#f5a524"/><rect x="6" width="6" height="12" fill="#1b2740"/></pattern>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16233f"/><stop offset="1" stop-color="#0d1526"/></linearGradient></defs>
+<rect width="1010" height="380" fill="url(#sky)"/>
+<g transform="translate(190,0)">
+<rect x="96" y="50" width="610" height="270" rx="6" fill="none" stroke="#2a3a5a" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="110" y="72" fill="#4b5f86" font-size="13" font-weight="900">卸车室</text><rect x="-163" y="236" width="6" height="84" fill="#64748b"/><rect x="-188" y="200" width="56" height="38" rx="5" fill="#1d4ed8" stroke="#fff" stroke-width="2"/><text x="-160" y="224" text-anchor="middle" fill="#fff" font-size="12" font-weight="900">P 等待区</text>
+<path d="M-186 327H86" stroke="#fff" stroke-width="2" stroke-dasharray="10 8" opacity=".7"/><rect x="86" y="320" width="4" height="14" fill="#ef4444"/><text x="-40" y="355" text-anchor="middle" fill="#7f95bd" font-size="12" font-weight="900">▶ 等待区 · 停车线内等候</text>
+<rect x="-190" y="334" width="1010" height="46" fill="#0a101c"/>
+<rect x="-190" y="320" width="300" height="14" fill="#3b4a66"/><rect x="670" y="320" width="150" height="14" fill="#3b4a66"/>
+<rect x="110" y="320" width="4" height="60" fill="url(#hz)"/><rect x="236" y="320" width="4" height="60" fill="url(#hz)"/>
+<text x="175" y="366" text-anchor="middle" fill="#7c5a3a" font-size="13" font-weight="900">料仓</text>
+<rect id="cvF" class="mv" x="110" y="276" width="130" height="50" fill="#3f4d6b" stroke="#1b2740"/><rect id="cvN" class="mv" x="110" y="282" width="130" height="50" fill="#6b7a99" stroke="#1b2740"/><text x="175" y="352" text-anchor="middle" fill="#7c5a3a" font-size="11" font-weight="900" opacity=".0">.</text>
+<g id="room"><path d="M-100 252H250" stroke="#3b4a66" stroke-width="2" stroke-dasharray="6 6" opacity=".6"/><rect x="-90" y="250" width="132" height="5" fill="#0a101c"/><rect x="-84" y="194" width="120" height="56" rx="5" fill="#12301f" stroke="#22c55e" stroke-width="2"/><rect x="-76" y="201" width="96" height="28" fill="#7dd3fc" opacity=".2"/><rect x="22" y="212" width="12" height="38" fill="#0f3d26" stroke="#22c55e"/><text x="-24" y="188" text-anchor="middle" fill="#6ee7b7" font-size="12" font-weight="900">操作室</text></g>
+<g id="blk" opacity="0" transform="translate(330,320)"><rect y="-86" width="168" height="56" fill="#667"/><rect y="-30" width="238" height="12" fill="#556"/><circle cx="40" cy="-17" r="17" fill="#222"/><circle cx="200" cy="-17" r="17" fill="#222"/><text x="84" y="-52" fill="#fff" text-anchor="middle" font-weight="900" font-size="15">他车在内</text></g>
+<g id="pl" class="mv" style="transform:translate(240px,320px)">
+<rect y="0" width="430" height="14" rx="3" fill="#52617e"/><rect y="10" width="430" height="4" fill="url(#hz)"/><circle cx="0" cy="7" r="9" fill="#94a3b8"/>
+<g id="truck" class="mv"><g id="shake">
+<rect x="0" y="-86" width="192" height="56" rx="4" fill="#2b6cf0"/><rect x="6" y="-80" width="180" height="44" fill="#0e1a33"/><rect id="mat" class="mv" x="6" y="-80" width="180" height="44" fill="#7a5a38"/>
+<path d="M196 -30V-72H212L232 -52 238 -48V-30Z" fill="#f5a524"/><path d="M204 -66H212L226 -52H204Z" fill="#9bd5ff"/><rect y="-30" width="238" height="12" fill="#1e293b"/>
+<g fill="#0b0f18" stroke="#cfd8e8" stroke-width="4"><circle cx="35" cy="-17" r="15"/><circle cx="80" cy="-17" r="15"/><circle cx="125" cy="-17" r="15"/><circle cx="170" cy="-17" r="15"/></g>
+<g id="mud" opacity="0"><rect x="108" y="-47" width="80" height="7" rx="2" fill="#ef4444" stroke="#fff" stroke-width="1.5"/></g>
+<g id="dr" class="mv" style="transform:translate(-3px,-86px)"><rect width="6" height="56" fill="#fcd34d" stroke="#92400e"/><rect x="2.5" y="4" width="1" height="48" fill="#92400e"/></g>
+</g></g>
+<rect x="212" y="-18" width="56" height="8" rx="3" fill="#64748b"/><rect x="212" y="-12" width="56" height="10" rx="3" fill="#94a3b8" stroke="#e2e8f0"/><text x="240" y="26" text-anchor="middle" fill="#cbd5e1" font-size="9" font-weight="900">两侧纵移油缸</text><rect id="rod2" class="mv" x="0" y="0" width="1" height="3" fill="#94a3b8"/><rect id="rod" class="mv" x="0" y="0" width="1" height="4" fill="#e2e8f0"/>
+<rect id="rs" class="mv" x="20" y="-34" width="12" height="34" fill="#f5a524" stroke="#fff" stroke-width="1"/>
+<g id="tg" class="mv"><rect x="-7" y="-6" width="14" height="6" rx="1" fill="#f5a524"/><rect id="tgr" x="-3" y="-17" width="6" height="17" rx="1" fill="#facc15" stroke="#fff" stroke-width="1.2"/></g>
+</g>
+<g id="g0" class="mv" style="transform:translate(96px,232px)"><rect x="0" y="-3" width="64" height="6" fill="url(#hz)"/></g><rect x="92" y="232" width="8" height="88" fill="#64748b"/>
+<g id="g1" class="mv" style="transform:translate(700px,232px)"><rect x="-64" y="-3" width="64" height="6" fill="url(#hz)"/></g><rect x="696" y="232" width="8" height="88" fill="#64748b"/>
+<rect x="771" y="228" width="4" height="92" fill="#64748b"/>
+<rect x="760" y="150" width="26" height="80" rx="6" fill="#0b0f18" stroke="#64748b" stroke-width="2"/><rect x="771" y="228" width="4" height="8" fill="#64748b"/>
+<circle id="lr" class="lp lr" cx="773" cy="165" r="8"/><circle id="ly" class="lp ly" cx="773" cy="189" r="8"/><circle id="lg" class="lp lg2" cx="773" cy="213" r="8"/>
+<text x="773" y="142" text-anchor="middle" fill="#cbd5e1" font-size="10" font-weight="900">右前信号灯</text>
+<g id="dust"><circle cx="200" cy="300" r="5" style="--d:0s"/><circle cx="215" cy="305" r="4" style="--d:.2s"/><circle cx="228" cy="298" r="5" style="--d:.4s"/><circle cx="190" cy="308" r="4" style="--d:.6s"/><circle cx="222" cy="310" r="3" style="--d:.1s"/></g>
+<g id="puff"><circle cx="300" cy="300" r="8" style="--d:0s;--x:-20px"/><circle cx="312" cy="303" r="7" style="--d:.2s;--x:10px"/><circle cx="290" cy="304" r="7" style="--d:.4s;--x:-35px"/></g>
+<g id="man" class="mv" style="transform:translate(0px,320px);opacity:0"><rect x="-4" y="-12" width="3.4" height="12" fill="#1e293b"/><rect x=".6" y="-12" width="3.4" height="12" fill="#1e293b"/><rect x="-6" y="-31" width="12" height="20" rx="3" fill="#fb923c"/><circle cy="-37" r="6" fill="#fcd9b6"/><path d="M-7 -38A7 7 0 0 1 7 -38Z" fill="#facc15"/></g>
+</g></svg><div class="hud l"><div>📺 左侧监控</div><svg viewBox="0 0 120 70"><rect x="6" y="60" width="108" height="4" fill="#475569"/><circle cx="76" cy="43" r="17" fill="#0b0f18" stroke="#cfd8e8" stroke-width="4"/><rect id="mon" class="mv" x="52" y="24" width="8" height="36" fill="#f5a524"/></svg><b id="monT">平放</b></div><div class="hud r"><div>🚦 信号灯</div><i id="hr" class="lp lr"></i><i id="hy" class="lp ly"></i><i id="hg" class="lp lg2"></i></div></div><div id="say"></div>
+<div class="hmi"><div class="t">🎛 操作室控制面板（也可点按钮亲手操作）</div>
+<button id="bm1" onclick="mudSet(true)">① 有挡泥板</button><button id="bm0" onclick="mudSet(false)">① 无挡泥板</button>
+<button class="gr" onclick="start()">② 卸车启动</button><button class="am" onclick="fin()">③ 卸车完成</button>
+<button class="sk" onclick="vibBtn()">震动器</button><button class="rd" onclick="estop()">🛑 急停</button></div>
+<div class="hmi"><button onclick="go(Math.max(0,step-1))">◀ 上一步</button><button id="ap" class="am" onclick="togAuto()">▶ 自动演示</button><button onclick="go(step)">↻ 重播本步</button><button onclick="go((step+1)%8)">下一步 ▶</button></div>
+</div>
+<div class="c"><div style="display:flex;gap:10px;align-items:center"><span class="badge" id="bn">1</span><h2 id="bt" style="margin:0;font-size:20px"></h2></div>
+<div class="slg" id="sl"></div><div id="ac"></div><div class="wn" id="wn"></div><div class="hmi" id="vr"></div></div></div>
+<div class="rh" id="rh"></div>
+<p style="color:var(--mu);font-size:12px;text-align:center;margin-top:14px">突发情况请立即拍下【急停按钮】· 设备疑问请联系当班人员或通过语音话筒联系中控室</p>
+</div>
+<script>
+const E=i=>document.getElementById(i);
+const D=[
+{t:'停靠 · 等待区',s:'车辆先停在等待区，红灯待命！',a:['车辆停靠在<b>等待区</b>','等候卸车室<b>空房</b>','未获准许，不得驶入'],w:'未确认室内无车、道闸关闭前，不得驶入！'},
+{t:'空房 · 抬闸驶入',s:'入口闸抬起同时变绿灯，车尾过闸后闸关，车不停顿开到出口闸附近停下！',a:['确认室内<b>无车</b>，入口、出口道闸均<b>关闭</b>','入口道闸<b>抬起</b>同时变<b>绿灯</b>，车辆缓慢前行','车尾过入口后入口闸<b>关闭</b>，车<b>不停顿</b>继续行驶，到<b>出口道闸</b>附近停车（<b>红灯</b>，出口闸保持关闭）'],w:'有车或道闸未关闭，严禁驶入！',v:['✅ 无车+双闸关闭','❌ 室内有车','❌ 道闸未关']},
+{t:'黄灯倒车 · 靠挡',s:'黄灯缓慢倒车，后挡先升1/3；后轮顶住后挡，后挡才升到4/5！',a:['<b>黄灯</b>缓慢倒车（绿灯前行、红灯停车）','后挡先升到后轮<b>1/3</b>高度；看<b>左侧监控</b>，后轮<b>顶住（相切）</b>后挡时，后挡才升到<b>4/5</b>','未升到位 → 往前行驶一点，升满后再倒；然后<b>停车、放气、下车</b>'],w:'后挡未升到位前不得硬靠！下车前必须放气！',v:['✅ 一次到位','⚠ 未到位：前行再倒']},
+{t:'油缸找中 · 开后门',s:'下车后前挡（虚框）由油缸往车厢后方移动，找到两前轮中间，再去车尾开后门！',a:['驾驶员下车，两侧<b>纵移油缸</b>拖着<b>前挡</b>从驾驶室后方、最前轮胎附近的起始位（虚线，油缸缩回位）往<b>车厢后方</b>移动','前挡（移动中为虚框、收在平台内）找到<b>前轮两轮中间</b>后<b>落下到位</b>，高度到<b>轮胎中心</b>','司机绕看确认后，到车尾打开<b>后车门（两侧开）</b>'],w:'若前挡未居中且落下有损车风险：回前端系安全绳，在操作室选【有挡泥板】！',v:['✅ 前挡居中','❌ 未在两轮中间']},
+{t:'回操作室 · 选板启动',s:'回操作室，按实际选有无挡泥板，点卸车启动，人别出屋！',a:['驾驶员走到左侧的<b>操作室</b>（与车身等高，平地进出）','按车辆实际情况选择<b>有/无挡泥板</b>','点击<b>卸车启动</b>，平台升到最顶后震动器才振动；司机全程留在操作室'],w:'卸车过程中司机必须留在操作室，严禁外出！'},
+{t:'震动器 · 按需再开',s:'震动器按流程自动振动，残料多就再开一次！',a:['卸车过程中震动器<b>自行振动</b>','司机根据<b>实际卸车情况</b>判断','需要时<b>再次开启震动器</b>'],w:'平台升到最顶后才能振动；观察残料按需开启，全程留在操作室！'},
+{t:'卸车完成 · 斗门前挡',s:'平台先降，降到位关斗门，前挡收回，再出去关后门！',a:['点击<b>卸车完成</b> → 平台先下降','下降到位 → <b>料斗门关闭</b>（里外两扇）→ <b>前挡收回</b>（缩回平台内），油缸缩回起始位','全部完成后司机离开操作室，整备车辆、<b>关后门</b>'],w:'料斗门未完全关闭前，严禁靠近车尾深坑！'},
+{t:'慢行驶离 · 闸自开',s:'上车启动，绿灯慢行；后挡落尽，出口闸自动开启！',a:['上车、启动车辆，<b>绿灯</b>缓慢前行','<b>后挡慢慢下降</b>，看左侧监视器','后挡完全下降后，<b>出口道闸自动打开</b>，车辆驶离'],w:'后挡完全下降前，切勿加速硬冲！'}];
+const RH=['等待区里先停好','空房闸闭抬杆进','绿进红停黄倒车','油缸找中开后门','选板启动人别走','震动自动看残料','平台降完关斗门','后挡落尽闸自开'];
+const CAM=[[0,640],[100,780],[380,600],[400,560],[100,720],[100,800],[100,800],[380,630]];
+let vb=[0,1010],vt=0,T=[],step=0,variant=0,auto=0,S={mud:false,started:0,fin:0};
+function cam(i){const w=E('sc').parentNode.clientWidth,g=w<720?CAM[i]:[0,1010],f=vb.slice(),t0=performance.now();cancelAnimationFrame(vt);(function s(t){const k=Math.min(1,(t-t0)/700),e=k*k*(3-2*k);vb=[f[0]+(g[0]-f[0])*e,f[1]+(g[1]-f[1])*e];E('sc').setAttribute('viewBox',vb[0]+' 0 '+vb[1]+' 380');if(k<1)vt=requestAnimationFrame(s)})(t0)}
+addEventListener('resize',()=>cam(step));
+const at=(m,f)=>T.push(setTimeout(f,m)),clr=()=>{T.forEach(clearTimeout);T=[]};
+const tr=(i,t,m)=>{const e=E(i);e.style.transitionDuration=m+'ms';e.style.transform=t};
+const truck=(x,m)=>tr('truck',`translate(${x}px,0)`,m),plat=(a,m)=>tr('pl',`translate(240px,320px) rotate(${-a}deg)`,m);
+const cov=(o,m)=>{tr('cvF',`scaleY(${o?1:.12})`,m);tr('cvN',`scaleY(${o?1:.12})`,m)};
+const man=(x,s,m,y=320)=>{tr('man',`translate(${x}px,${y}px)`,m);E('man').style.opacity=s};
+const dr=o=>tr('dr',`translate(-3px,-86px) scaleX(${o?6.5:1})`,900),mat=(f,m)=>tr('mat',`scaleY(${f})`,m);
+const gate=(g,d)=>tr('g'+g,g?`translate(700px,232px) rotate(${d?0:80}deg)`:`translate(96px,232px) rotate(${d?0:-80}deg)`,800);
+const stp=(l,m)=>{tr('rs',`scaleY(${l*30/34})`,m);tr('mon',`scaleY(${l*34/36})`,m);E('monT').textContent=l==0?'平放':l<.4?'1/3':l<.75?'未到位':'4/5 ✓'};
+const tgPos=(x,m)=>{tr('tg',`translate(${x}px,0)`,m);const k=Math.max(1,212-x);tr('rod',`translate(${x}px,-9px) scale(${k},1)`,m);tr('rod2',`translate(${x}px,-15px) scale(${k},1)`,m)};
+const tong=m=>E('tgr').setAttribute('class',m);
+const light=c=>{['r','y','g'].forEach(k=>{E('l'+k).classList.toggle('on',k==c);E('h'+k).classList.toggle('on',k==c)})};
+const vib=o=>E('shake').classList.toggle('vib',!!o),dump=o=>E('dust').classList.toggle('on',!!o);
+const puff=()=>{const p=E('puff');p.classList.add('on');at(2200,()=>p.classList.remove('on'))};
+function say(t,c){const e=E('say');e.textContent=t;e.className=c||''}
+function mudSet(v){S.mud=v;E('mud').style.opacity=v?1:0;E('bm1').classList.toggle('sel',v);E('bm0').classList.toggle('sel',!v);if(step>=4&&step<=6)tong(v?'up':'')}
+function speak(t){if(!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=.95;speechSynthesis.speak(u)}
+const cur=()=>({v:D[step].t+'。'+D[step].s+D[step].a.join('；').replace(/<[^>]+>/g,'')+'。注意：'+D[step].w});
+function base(i){clr();vib(0);dump(0);S.started=0;S.fin=0;S.top=(i==5||i==6)?1:0;
+truck([-560,-390,180,12,12,12,12,12][i],0);plat(i==5||i==6?34:0,0);gate(0,1);gate(1,1);E('blk').style.opacity=0;
+light('r');stp(i<3?0:.8,0);mat(i==5?.45:i>=6?0:1,0);cov(i==5||i==6?1:0,0);dr(i>=4&&i<=6?1:0);
+man([0,0,0,490,232,-20,-20,232][i],i>=3?1:0,0,i==5||i==6?250:320);E('mud').style.opacity=S.mud?1:0;
+if(i>=4&&i<=6){tgPos(160,0);tong(S.mud?'up':'')}else{tgPos(202,0);tong('ghost')}say('')}
+function start(){if(step!=4||S.started)return;S.started=1;say('卸车启动 → 料斗门（里外两扇）打开 → 平台举升');cov(1,1800);at(1900,()=>{plat(34,5000);say('平台举升中（升到最顶后才能振动）')});at(6900,()=>{S.top=1;say('平台已升到最顶 → 震动器自动振动','ok');vib(1);mat(.45,3500);dump(1)});at(10500,()=>{vib(0);dump(0);say('震动器已按流程自动振动 → 下一步：按需再次开启','ok')})}
+function vibBtn(){const o=!E('shake').classList.contains('vib');if(o&&!S.top){say('⚠ 平台未升到最顶，不能振动','bad');return}vib(o);if(step==5){dump(o);if(o){mat(0,3500);at(3600,()=>{vib(0);dump(0)})}}}
+function fin(){if(step<6){go(6);return}if(step!=6||S.fin)return;S.fin=1;S.top=0;vib(0);dump(0);say('点击卸车完成 → 平台开始下降');plat(0,4500);
+at(4700,()=>{say('平台下降到位 → 料斗门（里外两扇）关闭');cov(0,3200)});
+at(8100,()=>{say('料斗门已关闭 → 前挡收回（缩回平台内）','ok');tong('ghost')});at(8900,()=>{say('纵移油缸缩回 → 前挡回到驾驶室后方起始位');tgPos(202,2200)});
+at(11400,()=>{say('前挡已回位 → 司机走出操作室，整备车辆','ok');man(232,1,3600,250)});at(15100,()=>man(232,1,700,320));
+at(16000,()=>{dr(0);say('后车门（两侧开）已关好 → 上车驶离','ok')})}
+const P=[()=>{truck(-390,2500);say('车辆停靠在等待区 · 红灯，停车线内待命')},
+()=>{if(!variant){say('✅ 室内无车 · 入口、出口道闸均关闭','ok');at(1500,()=>{gate(0,0);light('g');say('入口道闸抬起，同时变绿灯 → 车辆缓慢前行');truck(180,7500)});at(4800,()=>{gate(0,1);say('车尾已过入口 → 入口道闸关闭 · 车辆继续行驶，不停顿')});at(9100,()=>{light('r');say('行驶到出口道闸附近 → 停车 · 红灯（出口闸保持关闭）','ok')})}
+else if(variant==1){E('blk').style.opacity=1;say('🚫 卸车室内有车 → 严禁驶入！','bad')}else{gate(0,0);gate(1,0);say('🚫 道闸未关闭 → 严禁驶入！','bad')}},
+()=>{say('红灯 · 车辆停稳');at(600,()=>{light('y');say('黄灯 → 缓慢倒车 · 后挡升至后轮1/3高度');truck(60,3600);stp(1/3,3600)});at(4400,()=>{truck(12,2400);say('继续倒车，后轮靠近后挡…')});
+if(!variant){at(6900,()=>{say('后轮顶住（相切）后挡 → 后挡升至后轮4/5','ok');stp(.8,1500)});at(8700,()=>{light('r');say('停车 → 放气 → 下车','ok');puff()});at(9200,()=>man(490,1,0))}
+else{at(6900,()=>{stp(.55,1200);say('⚠ 后挡未升到4/5','bad')});at(8400,()=>{light('g');truck(50,1500);stp(.8,1500);say('往前行驶一点，直到后挡完全升起')});at(10300,()=>{light('y');truck(12,2000);say('再倒车，后轮顶住后挡')});at(12500,()=>{light('r');say('停车 → 放气 → 下车','ok');puff()});at(13000,()=>man(490,1,0))}},
+()=>{say('驾驶员下车 → 纵移油缸伸出，前挡（虚框，收在平台内）从缩回位往车厢后方移动，寻找前轮两轮中间');tgPos(variant?180:160,3200);at(300,()=>man(400,1,2400));
+if(!variant){at(3500,()=>{tong('');say('✅ 前挡落下到位 · 在前轮两个轮胎正中间（高度到轮胎中心）','ok')});at(5000,()=>man(232,1,2600));at(7800,()=>{dr(1);say('车后门（两侧开）已打开 → 回操作室','ok')})}
+else{at(3500,()=>{tong('bad');say('❌ 前挡未在两轮中间！回前端系安全绳 → 操作室选【有挡泥板】','bad');mudSet(true)});at(6000,()=>man(232,1,2600));at(8800,()=>{dr(1);say('车后门（两侧开）已打开 → 回操作室','ok')})}},
+()=>{say('走到操作室');man(232,1,700,250);at(700,()=>man(-20,1,3600,250));at(4600,()=>say('选择：'+(S.mud?'有':'无')+'挡泥板 → 点击卸车启动'));at(6200,start)},
+()=>{vib(1);dump(1);mat(.15,3000);say('震动器自动振动中…');at(3200,()=>{vib(0);dump(0);say('自动振动结束 · 残料多？由司机决定再次开启【震动器】')});at(6200,()=>{vib(1);dump(1);mat(0,2500);say('司机再次开启震动器')});at(8800,()=>{vib(0);dump(0);say('物料卸净 → 点【卸车完成】','ok')})},
+()=>{at(1500,fin)},
+()=>{say('司机回驾驶室');man(490,1,2500);at(2600,()=>{man(490,0,0);light('g');say('启动车辆 → 绿灯 · 缓慢前行，后挡慢慢下降');truck(110,4500);stp(0,4500)});at(7200,()=>{say('后挡完全下降到位 → 出口道闸自动打开','ok');gate(1,0)});at(8200,()=>{say('车辆驶离卸车室 · 一路平安！','ok');truck(560,6000)})}];
+const dur=()=>[3500,10500,variant?14200:10200,variant?11500:10500,17200,10000,18500,14500][step];
+function render(){const d=D[step];E('bn').textContent=step+1;E('bt').textContent=d.t;E('sl').textContent=d.s;E('wn').textContent='⚠ '+d.w;
+E('ac').innerHTML=d.a.map(x=>`<div class="ac">▸ <span>${x}</span></div>`).join('');
+E('vr').innerHTML=d.v?d.v.map((x,k)=>`<button class="${variant==k?'am':''}" onclick="variant=${k};go(step,1)">${x}</button>`).join(''):'';
+E('pills').innerHTML=D.map((x,i)=>`<button class="${i==step?'on':''}" onclick="go(${i})">${i+1}. ${x.t.split(' · ')[0]}</button>`).join('')}
+function go(i,keep){if(!keep&&i!=step)variant=0;step=i;render();cam(i);base(i);void E('sc').getBoundingClientRect();at(60,P[i]);if(auto)at(dur(),()=>go((step+1)%8))}
+function togAuto(){auto=!auto;E('ap').textContent=auto?'⏸ 暂停自动':'▶ 自动演示';go(step,1)}
+function estop(){clr();['truck','pl','man','cvF','cvN','mat','rs','mon','dr','tg','rod','rod2','g0','g1'].forEach(i=>{const e=E(i);e.style.transitionDuration='0ms';e.style.transform=getComputedStyle(e).transform});vib(0);dump(0);auto=0;E('ap').textContent='▶ 自动演示';say('🛑 急停已按下 · 全部动作停止（点「重播本步」复位）','bad')}
+E('rh').innerHTML=RH.map((x,i)=>`<div onclick="go(${i});speak('${x}')"><i>${i+1}</i>${x}</div>`).join('');
+mudSet(false);go(0);
+</script></body></html>
